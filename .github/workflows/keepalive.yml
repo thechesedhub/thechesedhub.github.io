@@ -14,9 +14,9 @@ jobs:
         env:
           TCH_KEY: sb_publishable_r5KlAzkgY0PeL7cmzq2haw_eMgo2uex
         run: |
-          code=$(curl -s -o /dev/null -w "%{http_code}" -H "apikey: $TCH_KEY" -H "Authorization: Bearer $TCH_KEY" "https://usvpsupjzcwbnxrfzhmg.supabase.co/rest/v1/")
+          code=$(curl -s -o /dev/null -w "%{http_code}" -H "apikey: $TCH_KEY" -H "Authorization: Bearer $TCH_KEY" "https://usvpsupjzcwbnxrfzhmg.supabase.co/rest/v1/posts?select=id&limit=1")
           echo "HTTP $code"
-          test "$code" != "000"
+          test "$code" = "200"
       - name: Touch keep-alive marker
         run: |
           git config user.name "tch-keepalive"
