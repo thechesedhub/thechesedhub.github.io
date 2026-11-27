@@ -1,0 +1,26 @@
+name: Supabase keep-alive
+on:
+  schedule:
+    - cron: '23 11 */2 * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ping Supabase REST endpoint
+        env:
+          TCH_KEY: sb_publishable_r5KlAzkgY0PeL7cmzq2haw_eMgo2uex
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" -H "apikey: $TCH_KEY" -H "Authorization: Bearer $TCH_KEY" "https://usvpsupjzcwbnxrfzhmg.supabase.co/rest/v1/")
+          echo "HTTP $code"
+          test "$code" != "000"
+      - name: Touch keep-alive marker
+        run: |
+          git config user.name "tch-keepalive"
+          git config user.email "keepalive@thechesedhub.com"
+          date -u > .keepalive
+          git add .keepalive
+          git commit -m "keep-alive ping" && git push || echo "nothing to commit"
